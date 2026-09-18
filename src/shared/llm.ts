@@ -29,7 +29,7 @@ export const LLM_PROVIDERS: LlmProviderDefinition[] = [
     label: 'OpenAI',
     description: 'OpenAI API using the Chat Completions interface.',
     baseUrl: 'https://api.openai.com/v1',
-    model: 'gpt-5.4-mini',
+    model: 'sol-high',
     requiresApiKey: true,
   },
   {
@@ -53,7 +53,7 @@ export const LLM_PROVIDERS: LlmProviderDefinition[] = [
     label: 'Anthropic Claude',
     description: 'Claude through the native Messages API.',
     baseUrl: 'https://api.anthropic.com/v1',
-    model: 'claude-sonnet-4-6',
+    model: 'claude-sonnet-5',
     requiresApiKey: true,
   },
 ];

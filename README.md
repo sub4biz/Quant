@@ -14,7 +14,7 @@ The core promise is simple: useful market context without paid API lock-in. Quan
   <img src="https://img.shields.io/badge/engine-Signal%20Engine%20V2-1fbf75?style=flat-square" alt="Signal Engine V2">
   <img src="https://img.shields.io/badge/local%20AI-optional-1fbf75?style=flat-square" alt="Optional local AI">
   <img src="https://img.shields.io/badge/cloud%20LLM-optional-1fbf75?style=flat-square" alt="Optional cloud LLM providers">
-  <img src="https://img.shields.io/badge/release-v2.1.0-4d7ef7?style=flat-square" alt="Quant v2.1.0">
+  <img src="https://img.shields.io/badge/version-v2.2.0-4d7ef7?style=flat-square" alt="Quant v2.2.0">
   <img src="https://img.shields.io/badge/license-MIT-6d95ff?style=flat-square" alt="MIT license">
 </p>
 
@@ -27,7 +27,7 @@ Quant is built for rapid, disciplined market scanning and evidence-backed decisi
 - **Holdings News & Earnings:** Read curated news alongside upcoming earnings estimates, surprises, and reporting schedules.
 - **Cross-Asset Market Pulse:** 5-state committed regime engine, 90-session correlation matrices, and rate/oil/volatility shock analyzers.
 - **Causal Candlestick Charting:** Interactive multi-interval candlestick charts with automatic swing pivots, dynamic support/resistance channels, and risk-reward plans.
-- **Signal Board & Scanner:** Real-time screener with instant filtering by **`🟢 Buy Candidates`**, **`🔴 Short Candidates`**, Cup bases, MA alignments, 52W highs, VCP contractions, volume surges, and relative strength leaders.
+- **Signal Board & Scanner:** End-of-day scanner over a curated U.S. universe with instant filtering by **`🟢 Buy Candidates`**, **`🔴 Short Candidates`**, Cup bases, MA alignments, 52W highs, VCP contractions, volume surges, and relative strength leaders. Synthetic fallback candles are excluded from rankings.
 - **Authoritative 1D Signal Desk (V2):** Exact-setup causal classification delivering honest `BUY CANDIDATE`, `SHORT CANDIDATE`, `WAIT`, and `NO TRADE` decisions with transparent no-trade blocker explanations.
 - **Setup-Specific Historical Replay:** Lookahead-free 5-year daily replay modeling next-open entries, 5 bps slippage, pre-entry gap invalidations, same-bar stop priorities, and 10-bar timeout exits.
 - **Statistical Confidence Intervals:** Deterministic 95% bootstrap intervals on expectancy $R$ and 95% Wilson score intervals on positive trade rates.
@@ -37,9 +37,20 @@ Quant is built for rapid, disciplined market scanning and evidence-backed decisi
 - **Evidence-Backed Decision Journal:** Save local thesis snapshots with immutable evidence items (E1–E5), quality audits, and trade plans.
 - **Verified Quant AI Desk:** Deterministic rule verifier paired with optional local llama.cpp or cloud LLMs (OpenAI, Gemini, Grok, Claude).
 
+## What's New in v2.2.0 — Correctness & Repository Hardening
+
+v2.2.0 is deliberately a reliability release rather than a feature expansion:
+
+- **Correct price structure:** breakout and failed-breakout levels come from bars that were already closed when the setup formed.
+- **Live-only market rankings:** deterministic sample candles can preserve offline chart UX but cannot enter Signal Board rankings.
+- **Truthful coverage:** the default scanner is labeled **Curated U.S.** and reports attempted, successfully scanned, and unavailable names.
+- **Forward-record integrity:** pruning and first/last timestamps remain chronological even after the store is reordered.
+- **Cleaner source tree:** generated `dist/` output is ignored, and forecast implementation documents live under `docs/forecast/`.
+- **One-command baseline:** `npm run verify` runs type checking, core tests, Signal V2 regressions, and the production build.
+
 ## What's New in v2.1.0 — Quant Signal Engine V2
 
-Quant v2.1.0 introduces **Quant Signal Engine V2**, completely overhauling the legacy generic rule score and unrelated breakout backtest with a causal, setup-specific, execution-aware, and self-validating signal system.
+Quant v2.1.0 introduced **Quant Signal Engine V2**, overhauling the legacy generic rule score and unrelated breakout backtest with a causal, setup-specific, execution-aware signal system.
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────┐
@@ -290,10 +301,10 @@ Available modes and providers:
 | --- | --- | --- | --- |
 | Deterministic fallback | None | Rules engine | None |
 | Local llama.cpp | `http://127.0.0.1:8080/v1` | `gemma-4-e4b-it` | None |
-| OpenAI | `https://api.openai.com/v1` | `gpt-5.4-mini` | OpenAI API key |
+| OpenAI | `https://api.openai.com/v1` | `sol-high` | OpenAI API key |
 | Google Gemini | `https://generativelanguage.googleapis.com/v1beta/openai` | `gemini-3.5-flash` | Gemini API key |
 | xAI Grok | `https://api.x.ai/v1` | `grok-4.3` | xAI API key |
-| Anthropic Claude | `https://api.anthropic.com/v1` | `claude-sonnet-4-6` | Anthropic API key |
+| Anthropic Claude | `https://api.anthropic.com/v1` | `claude-sonnet-5` | Anthropic API key |
 
 ### Local llama.cpp
 
@@ -346,7 +357,7 @@ The **Test connection** action sends a minimal completion to verify the current 
 | Market Pulse | Five-state regime with two-session hysteresis, evidence provenance, decline attribution, six-asset monitor, correlations, and scenarios |
 | Charts | Candlesticks, volume, MA20/50/200, log scale, stable range transitions, Fit/Latest navigation, collapsible inspector, pivots, support/resistance, risk overlay |
 | Macro overlays | Jobs, unemployment, CPI, 10Y yield, oil, VIX |
-| Signal Board | End-of-day scan for cup bases, moving-average order, highs, VCP, volume, MACD, rebounds, and relative strength |
+| Signal Board | Live-only end-of-day ranking over a curated U.S. universe for candidate setups, cup bases, moving-average order, highs, VCP, volume, MACD, rebounds, and relative strength |
 | Signal Desk | Deterministic setup classification, quality score, blockers, risk plan, numbered evidence provenance |
 | Forecast | On-demand local Kronos-mini sampling, 24 trading-hour horizon, ETA/cancellation, chart ranges, immutable history, and observed-close comparison |
 | Decision Journal | Local thesis, catalyst, invalidation, lifecycle state, and immutable signal snapshot |
@@ -378,6 +389,7 @@ Important limitations:
 - Data can be delayed, approximate, incomplete, or unavailable.
 - Free endpoints should not be treated as trading infrastructure.
 - `SAMPLE` badges mean bundled fallback data is being shown instead of live data.
+- Sample candles are for graceful offline chart fallback only; they never enter Signal Board rankings.
 
 ## Repository Structure
 
@@ -474,6 +486,7 @@ The renderer does not directly call remote market endpoints. It asks the Electro
 | --- | --- |
 | `npm run build` | Bundle Electron main, preload, renderer, and static data into `dist/` |
 | `npm run typecheck` | Run TypeScript type checking without emitting files |
+| `npm run verify` | Run the deterministic local baseline: typecheck, core tests, Signal V2 tests, and production build |
 | `npm run test:quant` | Run deterministic signal-engine tests |
 | `npm run test:start` | Test one-command startup planning without installing or launching |
 | `npm run check:forecast` | Run forecast TypeScript, integration, resilience, Python, packaging, build, and browser-harness checks |
@@ -567,10 +580,10 @@ npm run package:all
 Outputs:
 
 ```text
-release/Quant-v2.1.0-mac-arm64/Quant.app
-release/Quant-v2.1.0-mac-arm64.zip
-release/Quant-v2.1.0-win-x64/Quant.exe
-release/Quant-v2.1.0-win-x64.zip
+release/Quant-v2.2.0-mac-arm64/Quant.app
+release/Quant-v2.2.0-mac-arm64.zip
+release/Quant-v2.2.0-win-x64/Quant.exe
+release/Quant-v2.2.0-win-x64.zip
 ```
 
 The version is embedded in both the release folder and archive name so a new package never silently replaces the previous release.
